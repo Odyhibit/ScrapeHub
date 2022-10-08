@@ -53,5 +53,5 @@ def set_last_update(filename: str):
 if __name__ == "__main__":
     github_url = "https://samples.vx-underground.org/samples/"
     output_dir = "../website_downloads"
-    last_update = get_last_update("../vx_underground_website_date")
+    last_update = get_last_update("../last_update/vx_underground_website_date")
     scrape_website(get_new_soup(github_url), last_update, output_dir)

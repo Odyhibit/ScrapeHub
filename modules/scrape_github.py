@@ -1,17 +1,18 @@
+import os
 from datetime import datetime, timezone
 import requests
 from bs4 import BeautifulSoup
 
 
-def scrape_github(page_soup: BeautifulSoup,  last_update: str, output_dir: str):
+def scrape_github(page_soup: BeautifulSoup, last_update: str, output_dir: str):
     raw_button = page_soup.find("a", {"id": "raw-url"})
     row_list = page_soup.find_all('div', {"role": "row"})
     github = "https://github.com/"
     if raw_button:
-        filename = page_soup.find("strong", "final-path").text
+        filename = raw_button['href']
         raw_content_url = github + page_soup.find('a', id="raw-url")['href']
         write_file(output_dir, filename, raw_content_url)
-        print("writing", filename, raw_content_url)
+        print(filename, raw_content_url)
         return
     elif len(row_list) > 0:
         for row in row_list:
@@ -19,7 +20,7 @@ def scrape_github(page_soup: BeautifulSoup,  last_update: str, output_dir: str):
             update_timestamp = row.find("time-ago", "no-wrap")
             if url_link and update_timestamp and update_timestamp['datetime'] > last_update:
                 scrape_github(get_new_soup(github + url_link['href']), last_update, output_dir)
-                print(url_link['href'], update_timestamp['datetime'])
+                # print(url_link['href'], update_timestamp['datetime'],last_update,(update_timestamp['datetime'] > last_update))
     else:
         print("no links found")
 
@@ -29,7 +30,12 @@ def get_new_soup(url: str) -> BeautifulSoup:
     return BeautifulSoup(r.text, 'html.parser')
 
 
+def get_folder(filename: str) -> str:
+    return filename[:filename.rfind("/") + 1]
+
+
 def write_file(output_dir: str, filename: str, content_url: str):
+    os.makedirs(output_dir + get_folder(filename), exist_ok=True)
     with open(output_dir + filename, "wb") as file_out:
         content = requests.get(content_url)
         file_out.write(content.content)
