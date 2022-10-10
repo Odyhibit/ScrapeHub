@@ -12,5 +12,5 @@ dangerous_extensions = [".exe", ".bat", ".ps1", ".css", ".html", ".htm", ".LNK",
 last_update = get_last_update(date_file)
 scrape_website(get_new_soup(website_url), last_update, output_dir)
 set_last_update(date_file)
-extract_defang(pathlib.Path(output_dir))
+extract_defang(pathlib.Path(output_dir), archive_extensions, dangerous_extensions)
 

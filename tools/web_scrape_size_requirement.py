@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 
 def scrape_website_storage_requirements(page_soup: BeautifulSoup, last_update: str):
     global total_size
+    global file_count
     table_rows = page_soup.find_all('tr')
     for i, row in enumerate(table_rows):
         if i > 1:
@@ -16,6 +17,7 @@ def scrape_website_storage_requirements(page_soup: BeautifulSoup, last_update: s
                 filename = get_filename_from_url(link)
                 print(filename, size, date)
                 total_size += int(size)
+                file_count += 1
 
 
 def get_filename_from_url(url: str) -> str:
@@ -34,7 +36,8 @@ def get_new_soup(url: str) -> BeautifulSoup:
 
 if __name__ == "__main__":
     github_url = "https://samples.vx-underground.org/samples/"
-    last_update = "1969-09-01 01:00:00"
+    update = "2022-10-08 06:58:30"
     total_size = 0
-    scrape_website_storage_requirements(get_new_soup(github_url), last_update, output_dir)
-    print("Total Download size is", total_size)
+    file_count = 0
+    scrape_website_storage_requirements(get_new_soup(github_url), update)
+    print("Total Download size is", total_size, "and there are", file_count, "files")
